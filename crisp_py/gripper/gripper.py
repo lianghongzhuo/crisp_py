@@ -61,12 +61,12 @@ class Gripper:
             self.node, stale_threshold=self.config.max_joint_delay
         )
 
-        self._command_publisher = self.node.create_publisher(
-            Float64MultiArray,
-            self.config.command_topic,
-            qos_profile_system_default,
-            callback_group=ReentrantCallbackGroup(),
-        )
+        # self._command_publisher = self.node.create_publisher(
+        #     Float64MultiArray,
+        #     self.config.command_topic,
+        #     qos_profile_system_default,
+        #     callback_group=ReentrantCallbackGroup(),
+        # )
         self._joint_subscriber = self.node.create_subscription(
             JointState,
             self.config.joint_state_topic,
