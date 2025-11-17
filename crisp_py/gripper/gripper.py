@@ -61,12 +61,12 @@ class Gripper:
             self.node, stale_threshold=self.config.max_joint_delay
         )
 
-        self._command_publisher = self.node.create_publisher(
-            Float64MultiArray,
-            self.config.command_topic,
-            qos_profile_system_default,
-            callback_group=ReentrantCallbackGroup(),
-        )
+        # self._command_publisher = self.node.create_publisher(
+        #     Float64MultiArray,
+        #     self.config.command_topic,
+        #     qos_profile_system_default,
+        #     callback_group=ReentrantCallbackGroup(),
+        # )
         self._joint_subscriber = self.node.create_subscription(
             JointState,
             self.config.joint_state_topic,
@@ -77,13 +77,13 @@ class Gripper:
             callback_group=ReentrantCallbackGroup(),
         )
 
-        self.node.create_timer(
-            1.0 / self.config.publish_frequency,
-            self._callback_monitor.monitor(
-                f"{namespace.capitalize()} Gripper Target Publisher", self._callback_publish_target
-            ),
-            ReentrantCallbackGroup(),
-        )
+        # self.node.create_timer(
+        #     1.0 / self.config.publish_frequency,
+        #     self._callback_monitor.monitor(
+        #         f"{namespace.capitalize()} Gripper Target Publisher", self._callback_publish_target
+        #     ),
+        #     ReentrantCallbackGroup(),
+        # )
 
         self.reboot_client = self.node.create_client(Trigger, self.config.reboot_service)
         self.enable_torque_client = self.node.create_client(
