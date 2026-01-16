@@ -55,7 +55,9 @@ class JointTrajectoryControllerClient(ActionClient):
         """
         self.node = node
         super().__init__(
-            node, FollowJointTrajectory, "joint_trajectory_controller/follow_joint_trajectory"
+            node,
+            FollowJointTrajectory,
+            "joint_trajectory_controller/follow_joint_trajectory",
         )
         self._goal = FollowJointTrajectory.Goal()
         namespace = self.node.get_namespace().strip("/")
@@ -85,12 +87,16 @@ class JointTrajectoryControllerClient(ActionClient):
         ]
         self._goal.trajectory.header.stamp = self.node.get_clock().now().to_msg()
         self._goal.trajectory.points = []
+        time_to_goal_sec = int(time_to_goal)
+        time_to_goal_nsec = int((time_to_goal - time_to_goal_sec) * 1e9)
         self._goal.trajectory.points.append(
             JointTrajectoryPoint(
                 positions=joint_config,
                 velocities=len(joint_config) * [0.0],
                 accelerations=len(joint_config) * [0.0],
-                time_from_start=Duration(seconds=int(time_to_goal), nanoseconds=0).to_msg(),
+                time_from_start=Duration(
+                    seconds=time_to_goal_sec, nanoseconds=time_to_goal_nsec
+                ).to_msg(),
             )
         )
         future = self.send_goal_async(self._goal)
