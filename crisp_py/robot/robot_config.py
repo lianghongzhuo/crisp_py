@@ -22,6 +22,7 @@ class RobotConfig:
         default_controller (str): Name of the default controller to use
         cartesian_impedance_controller_name (str): Name of the Cartesian impedance controller
         target_pose_topic (str): Topic name for publishing target poses
+        target_twist_topic (str): Topic name for publishing target twists
         target_joint_topic (str): Topic name for publishing target joint states
         current_pose_topic (str): Topic name for subscribing to current poses
         current_joint_topic (str): Topic name for subscribing to current joint states
@@ -45,6 +46,7 @@ class RobotConfig:
     joint_trajectory_controller_name: str = "joint_impedance_controller"
 
     target_pose_topic: str = "target_pose"
+    target_twist_topic: str = "target_twist"
     target_joint_topic: str = "target_joint"
     current_pose_topic: str = "current_pose"
     current_joint_topic: str = "joint_states"

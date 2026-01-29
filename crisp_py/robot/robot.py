@@ -90,6 +90,7 @@ class Robot:
         self._current_joint = None
         self._target_joint = None
         self._target_wrench = None
+        self._target_twist = None
         self._current_twist = None
         self._tf_pose = None
 
@@ -100,6 +101,9 @@ class Robot:
 
         self._target_pose_publisher = self.node.create_publisher(
             PoseStamped, self.config.target_pose_topic, qos_profile_system_default
+        )
+        self._target_twist_publisher = self.node.create_publisher(
+            TwistStamped, self.config.target_twist_topic, qos_profile_system_default
         )
         self._target_wrench_publisher = self.node.create_publisher(
             WrenchStamped, "target_wrench", qos_profile_system_default
@@ -168,6 +172,11 @@ class Robot:
         self.node.create_timer(
             1.0 / self.config.publish_frequency,
             self._callback_publish_target_wrench,
+            ReentrantCallbackGroup(),
+        )
+        self.node.create_timer(
+            1.0 / self.config.publish_frequency,
+            self._callback_publish_target_twist,
             ReentrantCallbackGroup(),
         )
 
@@ -349,6 +358,7 @@ class Robot:
         self._target_pose = None
         self._target_joint = None
         self._target_wrench = None
+        self._target_twist = None
 
     def wait_until_ready(self, timeout: float = 10.0, check_frequency: float = 10.0):
         """Wait until the robot is ready for operation.
@@ -401,6 +411,14 @@ class Robot:
         assert len(q) == self.nq, "Joint state must be of size nq."
         self._target_joint = q
 
+    def set_target_twist(self, twist: Twist):
+        """Set the target twist (velocity) for the end-effector.
+
+        Args:
+            twist (Twist): Target twist containing linear and angular velocity.
+        """
+        self._target_twist = twist.copy()
+
     def _callback_publish_target_pose(self):
         """Publish the current target pose if one exists.
 
@@ -433,6 +451,19 @@ class Robot:
         if self._target_wrench is None or not rclpy.ok():
             return
         self._target_wrench_publisher.publish(self._wrench_to_wrench_msg(self._target_wrench))
+
+    def _callback_publish_target_twist(self):
+        """Publish the target twist if one exists.
+
+        This callback is triggered periodically to publish the target twist
+        to the ROS topic for the robot controller.
+        """
+        if self._target_twist is None or not rclpy.ok():
+            return
+        target_twist = copy.deepcopy(self._target_twist)
+        self._target_twist_publisher.publish(
+            target_twist.to_ros_msg(self.config.base_frame, self.node.get_clock().now().to_msg())
+        )
 
     def set_target_wrench(
         self, force: List | NDArray | None = None, torque: List | NDArray | None = None
