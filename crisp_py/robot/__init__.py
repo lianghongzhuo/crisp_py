@@ -13,7 +13,7 @@ from crisp_py.robot.robot_config import (  # noqa: F401
     SO101Config,
     make_robot_config,
 )
-from crisp_py.utils.geometry import Pose  # noqa: F401
+from crisp_py.utils.geometry import Pose, Twist  # noqa: F401
 
 __all__ = [
     "Robot",
@@ -26,4 +26,5 @@ __all__ = [
     "SO101Config",
     "make_robot_config",
     "Pose",
+    "Twist",
 ]

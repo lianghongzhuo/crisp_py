@@ -291,16 +291,21 @@ class Gripper:
             raise RuntimeError("Command publisher is not initialized.")
 
         msg = Float64MultiArray()
-        msg.data = [
-            self._unnormalize(
-                self.value
-                + np.clip(
-                    self._normalize(self._target) - self.value,
-                    -self.config.max_delta,
-                    self.config.max_delta,
+        if self.config.pass_through_raw_command:
+            msg.data = [
+                self._target
+            ]
+        else:
+            msg.data = [
+                self._unnormalize(
+                    self.value
+                    + np.clip(
+                        self._normalize(self._target) - self.value,
+                        -self.config.max_delta,
+                        self.config.max_delta,
+                    )
                 )
-            )
-        ]
+            ]
         self._command_publisher.publish(msg)
 
     def _callback_joint_state(self, msg: JointState):
