@@ -27,7 +27,6 @@ class GripperConfig:
         max_delta (float): Maximum change in gripper value per update.
         use_gripper_command_action (bool): Whether to use GripperCommandAction.
         max_effort (float): Maximum effort for gripper command action.
-        pass_through_raw_command (bool): Whether to pass through raw command without normalization.
     """
 
     min_value: float
@@ -42,7 +41,6 @@ class GripperConfig:
     max_delta: float = 0.1
     use_gripper_command_action: bool = False
     max_effort: float = 10.0
-    pass_through_raw_command: bool = False
 
     @classmethod
     def from_yaml(cls, path: str | Path, **overrides) -> "GripperConfig":  # noqa: ANN003
@@ -90,9 +88,6 @@ class GripperConfig:
                     "use_gripper_command_action", False
                 ),
                 "max_effort": config.get("max_effort", 10.0),
-                "pass_through_raw_command": config.get(
-                    "pass_through_raw_command", False
-                ),
             }
 
             config_data.update(overrides)
